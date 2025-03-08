@@ -1,0 +1,10 @@
+cassandra:
+  hosts:
+    - "cassandra1"
+  cluster_name: "CatAlogCluster"
+  keyspace: "system"
+  datacenter: "DC1"
+  rack: "RACK1"
+  consistency: "QUORUM"
+  num_tokens: 128
+  snitch: "GossipingPropertyFileSnitch"

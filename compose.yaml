@@ -5,3 +5,30 @@ services:
       target: final
     ports:
       - "8080:8080"
+    networks:
+      - cassandra
+    depends_on:
+      cassandra1:
+        condition: service_healthy
+
+  cassandra1:
+    image: cassandra:latest
+    container_name: cassandra1
+    hostname: cassandra1
+    networks:
+      - cassandra
+    environment:
+      CASSANDRA_SEEDS: ${CASSANDRA_SEEDS}
+      CASSANDRA_CLUSTER_NAME: ${CASSANDRA_CLUSTER_NAME}
+      CASSANDRA_DC: ${CASSANDRA_DC}
+      CASSANDRA_RACK: ${CASSANDRA_RACK}
+      CASSANDRA_ENDPOINT_SNITCH: ${CASSANDRA_ENDPOINT_SNITCH}
+      CASSANDRA_NUM_TOKENS: ${CASSANDRA_NUM_TOKENS}
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -u cassandra -p cassandra -e 'DESCRIBE KEYSPACES'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+networks:
+  cassandra:
