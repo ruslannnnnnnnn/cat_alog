@@ -16,7 +16,7 @@ func (c CatRepository) Insert(cat *model.Cat) (err error) {
 		return err
 	}
 	defer session.Close()
-	query := session.Query("INSERT INTO catalog (id, name, date_of_birth, image_url) "+
+	query := session.Query("INSERT INTO catalog.cats (id, name, date_of_birth, image_url) "+
 		"VALUES (?, ?, ?, ?)", cat.Id, cat.Name, cat.DateOfBirth, cat.ImageUrl,
 	)
 	err = query.Exec()
@@ -42,14 +42,14 @@ func (c CatRepository) GetById(id string) (model.Cat, error) {
 	return cat, nil
 }
 
-func (c CatRepository) GetAllCats(page uint, perPage uint) ([]model.Cat, error) {
+func (c CatRepository) GetAllCats(page uint64, perPage uint32) ([]model.Cat, error) {
 	var cats []model.Cat
 	session, err := GetCassandraSession()
 	if err != nil {
 		return cats, err
 	}
 	defer session.Close()
-	offset := (page - 1) * perPage
+	offset := (page - 1) * uint64(perPage)
 	query := session.Query("SELECT id, name, date_of_birth, image_url FROM catalog.cats LIMIT ?, OFFSET ", perPage, offset)
 	err = query.Scan(cats)
 	if err != nil {

@@ -10,9 +10,15 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
 
 ARG TARGETARCH
 
+# main server
 RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,target=. \
     CGO_ENABLED=0 GOARCH=$TARGETARCH go build -o /bin/server ./src/cmd/server/
+
+# migrator
+RUN --mount=type=cache,target=/go/pkg/mod/ \
+    --mount=type=bind,target=. \
+    CGO_ENABLED=0 GOARCH=$TARGETARCH go build -o /bin/migrator ./src/cmd/migration/
 
 FROM alpine:latest AS final
 
@@ -35,6 +41,7 @@ RUN adduser \
 USER appuser
 
 COPY --from=build /bin/server /bin/
+COPY --from=build /bin/migrator /bin/
 
 COPY .env /app/
 COPY ./config/ /app/

@@ -3,7 +3,7 @@ package cassandra
 import (
 	"fmt"
 	"github.com/gocql/gocql"
-	"github.com/spf13/viper" // Используем viper для работы с YAML
+	"github.com/spf13/viper" // viper for .yaml files
 )
 
 const configPath = "/app/cassandra_config.yaml"

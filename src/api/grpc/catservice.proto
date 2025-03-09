@@ -15,7 +15,7 @@ message GetCatByIdRequest {
 }
 
 message GetAllCatsRequest {
-  uint32 page = 1;
+  uint64 page = 1;
   uint32 per_page = 2;
 }
 

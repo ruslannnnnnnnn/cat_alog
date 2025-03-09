@@ -29,6 +29,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+
+volumes:
+  cassandra_data:
 
 networks:
   cassandra:
