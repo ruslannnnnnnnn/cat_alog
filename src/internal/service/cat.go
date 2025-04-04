@@ -34,8 +34,11 @@ func (c CatService) GetAll(page uint64, perPage uint32) ([]model.Cat, error) {
 }
 
 func (c CatService) Create(cat *model.Cat) error {
-
-	err := c.repository.Insert(cat)
+	err := cat.IsValid()
+	if err != nil {
+		return err
+	}
+	err = c.repository.Insert(cat)
 	if err != nil {
 		return err
 	}

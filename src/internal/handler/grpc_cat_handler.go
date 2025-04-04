@@ -65,7 +65,7 @@ func (g *GrpcCatHandler) CreateCat(ctx context.Context, request *pb.CreateCatReq
 	}
 	err = g.catService.Create(&cat)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 	return &pb.CreateCatResponse{Id: id.String()}, nil
 }
