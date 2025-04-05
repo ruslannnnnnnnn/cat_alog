@@ -20,7 +20,6 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	CatService_GetCatById_FullMethodName = "/catservice.CatService/GetCatById"
-	CatService_GetAllCats_FullMethodName = "/catservice.CatService/GetAllCats"
 	CatService_CreateCat_FullMethodName  = "/catservice.CatService/CreateCat"
 )
 
@@ -29,7 +28,6 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CatServiceClient interface {
 	GetCatById(ctx context.Context, in *GetCatByIdRequest, opts ...grpc.CallOption) (*GetCatByIdResponse, error)
-	GetAllCats(ctx context.Context, in *GetAllCatsRequest, opts ...grpc.CallOption) (*GetAllCatsResponse, error)
 	CreateCat(ctx context.Context, in *CreateCatRequest, opts ...grpc.CallOption) (*CreateCatResponse, error)
 }
 
@@ -51,16 +49,6 @@ func (c *catServiceClient) GetCatById(ctx context.Context, in *GetCatByIdRequest
 	return out, nil
 }
 
-func (c *catServiceClient) GetAllCats(ctx context.Context, in *GetAllCatsRequest, opts ...grpc.CallOption) (*GetAllCatsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetAllCatsResponse)
-	err := c.cc.Invoke(ctx, CatService_GetAllCats_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *catServiceClient) CreateCat(ctx context.Context, in *CreateCatRequest, opts ...grpc.CallOption) (*CreateCatResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateCatResponse)
@@ -76,7 +64,6 @@ func (c *catServiceClient) CreateCat(ctx context.Context, in *CreateCatRequest, 
 // for forward compatibility.
 type CatServiceServer interface {
 	GetCatById(context.Context, *GetCatByIdRequest) (*GetCatByIdResponse, error)
-	GetAllCats(context.Context, *GetAllCatsRequest) (*GetAllCatsResponse, error)
 	CreateCat(context.Context, *CreateCatRequest) (*CreateCatResponse, error)
 	mustEmbedUnimplementedCatServiceServer()
 }
@@ -90,9 +77,6 @@ type UnimplementedCatServiceServer struct{}
 
 func (UnimplementedCatServiceServer) GetCatById(context.Context, *GetCatByIdRequest) (*GetCatByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCatById not implemented")
-}
-func (UnimplementedCatServiceServer) GetAllCats(context.Context, *GetAllCatsRequest) (*GetAllCatsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAllCats not implemented")
 }
 func (UnimplementedCatServiceServer) CreateCat(context.Context, *CreateCatRequest) (*CreateCatResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCat not implemented")
@@ -136,24 +120,6 @@ func _CatService_GetCatById_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CatService_GetAllCats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllCatsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CatServiceServer).GetAllCats(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CatService_GetAllCats_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CatServiceServer).GetAllCats(ctx, req.(*GetAllCatsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _CatService_CreateCat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateCatRequest)
 	if err := dec(in); err != nil {
@@ -182,10 +148,6 @@ var CatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCatById",
 			Handler:    _CatService_GetCatById_Handler,
-		},
-		{
-			MethodName: "GetAllCats",
-			Handler:    _CatService_GetAllCats_Handler,
 		},
 		{
 			MethodName: "CreateCat",

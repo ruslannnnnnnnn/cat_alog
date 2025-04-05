@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cat_alog/src/infrastructure/cassandra"
+	"cat_alog/internal/infrastructure/cassandra"
 	"fmt"
 	"github.com/spf13/cobra"
 	"log"

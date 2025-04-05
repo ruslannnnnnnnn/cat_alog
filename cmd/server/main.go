@@ -1,10 +1,10 @@
 package main
 
 import (
-	pb "cat_alog/src/api/grpc"
-	"cat_alog/src/infrastructure/cassandra"
-	"cat_alog/src/internal/handler"
-	"cat_alog/src/internal/service"
+	"cat_alog/internal/api/grpc"
+	"cat_alog/internal/domain/service"
+	"cat_alog/internal/infrastructure/cassandra"
+	"cat_alog/internal/interfaces/grpc/handler"
 	"fmt"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"

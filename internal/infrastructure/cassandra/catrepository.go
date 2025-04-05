@@ -1,7 +1,9 @@
 package cassandra
 
 import (
-	"cat_alog/src/internal/model"
+	"cat_alog/internal/domain/model"
+	"fmt"
+	"github.com/gocql/gocql"
 )
 
 type CatRepository struct{}
@@ -29,31 +31,36 @@ func (c CatRepository) Insert(cat *model.Cat) (err error) {
 
 func (c CatRepository) GetById(id string) (model.Cat, error) {
 	var cat model.Cat
-	session, err := GetCassandraSession()
-	if err != nil {
-		return cat, err
-	}
-	defer session.Close()
-	query := session.Query("SELECT id, name, date_of_birth, image_url FROM catalog.cats WHERE id=?", id)
-	err = query.Scan(cat)
-	if err != nil {
-		return cat, err
-	}
-	return cat, nil
-}
 
-func (c CatRepository) GetAllCats(page uint64, perPage uint32) ([]model.Cat, error) {
-	var cats []model.Cat
+	uuid, err := gocql.ParseUUID(id)
+	if err != nil {
+		return cat, fmt.Errorf("invalid UUID: %v", err)
+	}
+
 	session, err := GetCassandraSession()
 	if err != nil {
-		return cats, err
+		return cat, err
 	}
 	defer session.Close()
-	offset := (page - 1) * uint64(perPage)
-	query := session.Query("SELECT id, name, date_of_birth, image_url FROM catalog.cats LIMIT ?, OFFSET ", perPage, offset)
-	err = query.Scan(cats)
+
+	query := session.Query(
+		"SELECT CAST(id AS TEXT), name, date_of_birth, image_url FROM catalog.cats WHERE id=?",
+		uuid,
+	)
+
+	err = query.Scan(
+		&cat.Id,
+		&cat.Name,
+		&cat.DateOfBirth,
+		&cat.ImageUrl,
+	)
+
 	if err != nil {
-		return cats, err
+		if err == gocql.ErrNotFound {
+			return cat, fmt.Errorf("cat not found")
+		}
+		return cat, fmt.Errorf("scan failed: %v", err)
 	}
-	return cats, nil
+
+	return cat, nil
 }

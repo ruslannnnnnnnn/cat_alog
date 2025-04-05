@@ -14,11 +14,6 @@ message GetCatByIdRequest {
   string id = 1;
 }
 
-message GetAllCatsRequest {
-  uint64 page = 1;
-  uint32 per_page = 2;
-}
-
 message CreateCatResponse {
   string id = 1;
 }
@@ -34,12 +29,7 @@ message Cat {
   string image_url = 4;
 }
 
-message GetAllCatsResponse {
-  repeated Cat cats = 1;
-}
-
 service CatService {
   rpc GetCatById(GetCatByIdRequest) returns (GetCatByIdResponse);
-  rpc GetAllCats(GetAllCatsRequest) returns (GetAllCatsResponse);
   rpc CreateCat(CreateCatRequest) returns (CreateCatResponse);
 }

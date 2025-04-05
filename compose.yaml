@@ -2,6 +2,7 @@ services:
   server:
     build:
       context: .
+      dockerfile: ./docker/go/Dockerfile
       target: final
     ports:
       - "8080:8080"
