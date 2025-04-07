@@ -32,6 +32,9 @@ services:
       retries: 10
     volumes:
       - cassandra_data:/var/lib/cassandra
+      - ./config/cassandra.yaml:/etc/cassandra/cassandra.yaml
+    ports:
+      - "9042:9042"
 
 volumes:
   cassandra_data:

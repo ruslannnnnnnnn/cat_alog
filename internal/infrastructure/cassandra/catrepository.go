@@ -64,3 +64,25 @@ func (c CatRepository) GetById(id string) (model.Cat, error) {
 
 	return cat, nil
 }
+
+func (c CatRepository) Search(text string) ([]model.Cat, error) {
+	var cats []model.Cat
+	session, err := GetCassandraSession()
+	if err != nil {
+		return cats, err
+	}
+	defer session.Close()
+	//SELECT * FROM catalog.cats WHERE name LIKE 'sint%'
+	query := session.Query(`SELECT name, date_of_birth, image_url FROM catalog.cats WHERE name LIKE ?`, text+"%")
+	iter := query.Iter()
+	for {
+		var cat model.Cat
+		ok := iter.Scan(&cat.Id, &cat.Name, &cat.DateOfBirth, &cat.ImageUrl)
+		if !ok {
+			break
+		}
+		cats = append(cats, cat)
+	}
+
+	return cats, nil
+}

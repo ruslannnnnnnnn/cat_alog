@@ -19,10 +19,11 @@ func main() {
 	if err := godotenv.Load(envPath); err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	cassandraCheck, err := cassandra.CheckCassandraConnection()
-	if !cassandraCheck || err != nil {
+	connection, err := cassandra.GetCassandraSession()
+	if err != nil {
 		log.Fatalf("Cassandra connection failed: %v", err)
 	}
+	connection.Close()
 	fmt.Println("Cassandra connection successful")
 
 	repo := cassandra.NewCatRepository()

@@ -5,6 +5,7 @@ import (
 )
 
 type CatRepositoryInterface interface {
-	Insert(cat *model.Cat) (err error)
+	Insert(cat *model.Cat) error
 	GetById(id string) (model.Cat, error)
+	Search(text string) ([]model.Cat, error)
 }

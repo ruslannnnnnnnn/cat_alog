@@ -9,7 +9,7 @@ import (
 )
 
 // example:       <container_name>                        <migration file name>
-// docker exec -it cat_alog-server-1 /bin/migrator migrate "1.cql"
+// docker exec -it cat_alog-server-1 /bin/migrator migrate "00001 create keyspace.cql"
 func main() {
 	rootCmd := &cobra.Command{
 		Use:   "migrator",

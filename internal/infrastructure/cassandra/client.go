@@ -59,23 +59,3 @@ func GetCassandraSession() (*gocql.Session, error) {
 	}
 	return session, nil
 }
-
-func CheckCassandraConnection() (bool, error) {
-	cfg, err := LoadConfig()
-	if err != nil {
-		return false, err
-	}
-
-	cluster := gocql.NewCluster(cfg.Hosts...)
-	cluster.Keyspace = cfg.Keyspace
-	cluster.Consistency = cfg.Consistency
-	cluster.PoolConfig.HostSelectionPolicy = gocql.DCAwareRoundRobinPolicy(cfg.Datacenter)
-
-	session, err := cluster.CreateSession()
-	if err != nil {
-		return false, fmt.Errorf("connection failed: %v", err)
-	}
-	defer session.Close()
-
-	return true, nil
-}

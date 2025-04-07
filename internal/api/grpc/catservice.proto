@@ -29,7 +29,16 @@ message Cat {
   string image_url = 4;
 }
 
+message Cats {
+  repeated Cat cats = 1;
+}
+
+message SearchCatByText {
+  string search_text = 1;
+}
+
 service CatService {
   rpc GetCatById(GetCatByIdRequest) returns (GetCatByIdResponse);
   rpc CreateCat(CreateCatRequest) returns (CreateCatResponse);
+  rpc SearchCat(SearchCatByText) returns (Cats);
 }

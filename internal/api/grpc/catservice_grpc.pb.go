@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	CatService_GetCatById_FullMethodName = "/catservice.CatService/GetCatById"
 	CatService_CreateCat_FullMethodName  = "/catservice.CatService/CreateCat"
+	CatService_SearchCat_FullMethodName  = "/catservice.CatService/SearchCat"
 )
 
 // CatServiceClient is the client API for CatService service.
@@ -29,6 +30,7 @@ const (
 type CatServiceClient interface {
 	GetCatById(ctx context.Context, in *GetCatByIdRequest, opts ...grpc.CallOption) (*GetCatByIdResponse, error)
 	CreateCat(ctx context.Context, in *CreateCatRequest, opts ...grpc.CallOption) (*CreateCatResponse, error)
+	SearchCat(ctx context.Context, in *SearchCatByText, opts ...grpc.CallOption) (*Cats, error)
 }
 
 type catServiceClient struct {
@@ -59,12 +61,23 @@ func (c *catServiceClient) CreateCat(ctx context.Context, in *CreateCatRequest, 
 	return out, nil
 }
 
+func (c *catServiceClient) SearchCat(ctx context.Context, in *SearchCatByText, opts ...grpc.CallOption) (*Cats, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Cats)
+	err := c.cc.Invoke(ctx, CatService_SearchCat_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CatServiceServer is the server API for CatService service.
 // All implementations must embed UnimplementedCatServiceServer
 // for forward compatibility.
 type CatServiceServer interface {
 	GetCatById(context.Context, *GetCatByIdRequest) (*GetCatByIdResponse, error)
 	CreateCat(context.Context, *CreateCatRequest) (*CreateCatResponse, error)
+	SearchCat(context.Context, *SearchCatByText) (*Cats, error)
 	mustEmbedUnimplementedCatServiceServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedCatServiceServer) GetCatById(context.Context, *GetCatByIdRequ
 }
 func (UnimplementedCatServiceServer) CreateCat(context.Context, *CreateCatRequest) (*CreateCatResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCat not implemented")
+}
+func (UnimplementedCatServiceServer) SearchCat(context.Context, *SearchCatByText) (*Cats, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchCat not implemented")
 }
 func (UnimplementedCatServiceServer) mustEmbedUnimplementedCatServiceServer() {}
 func (UnimplementedCatServiceServer) testEmbeddedByValue()                    {}
@@ -138,6 +154,24 @@ func _CatService_CreateCat_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CatService_SearchCat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchCatByText)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CatServiceServer).SearchCat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CatService_SearchCat_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CatServiceServer).SearchCat(ctx, req.(*SearchCatByText))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CatService_ServiceDesc is the grpc.ServiceDesc for CatService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var CatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCat",
 			Handler:    _CatService_CreateCat_Handler,
+		},
+		{
+			MethodName: "SearchCat",
+			Handler:    _CatService_SearchCat_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -32,3 +32,11 @@ func (c CatService) Create(cat *model.Cat) error {
 	}
 	return nil
 }
+
+func (c CatService) Search(text string) ([]model.Cat, error) {
+	result, err := c.repository.Search(text)
+	if err != nil {
+		return []model.Cat{}, err
+	}
+	return result, nil
+}

@@ -57,3 +57,20 @@ func (g *GrpcCatHandler) CreateCat(ctx context.Context, request *pb.CreateCatReq
 	}
 	return &pb.CreateCatResponse{Id: id.String()}, nil
 }
+
+func (g *GrpcCatHandler) SearchCat(ctx context.Context, search *pb.SearchCatByText) (*pb.Cats, error) {
+	searchResult, err := g.catService.Search(search.GetSearchText())
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	cats := make([]*pb.Cat, len(searchResult))
+	for i, item := range searchResult {
+		cats[i] = &pb.Cat{
+			Id:          item.Id,
+			Name:        item.Name,
+			DateOfBirth: item.DateOfBirth.String(),
+			ImageUrl:    item.ImageUrl,
+		}
+	}
+	return &pb.Cats{Cats: cats}, nil
+}
