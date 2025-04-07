@@ -23,7 +23,7 @@ func NewGrpcCatHandler(catService service.CatService) *GrpcCatHandler {
 func (g *GrpcCatHandler) GetCatById(ctx context.Context, request *pb.GetCatByIdRequest) (*pb.GetCatByIdResponse, error) {
 	cat, err := g.catService.GetById(request.GetId())
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 	return &pb.GetCatByIdResponse{
 		Cat: &pb.Cat{

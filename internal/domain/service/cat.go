@@ -3,6 +3,7 @@ package service
 import (
 	"cat_alog/internal/domain/model"
 	"cat_alog/internal/domain/repository"
+	"github.com/google/uuid"
 )
 
 type CatService struct {
@@ -14,6 +15,10 @@ func NewCatService(repository repository.CatRepositoryInterface) CatService {
 }
 
 func (c CatService) GetById(id string) (model.Cat, error) {
+	valid := uuid.Validate(id)
+	if valid != nil {
+		return model.Cat{}, valid
+	}
 	result, err := c.repository.GetById(id)
 	if err != nil {
 		return model.Cat{}, err
