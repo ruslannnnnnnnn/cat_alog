@@ -73,7 +73,7 @@ func (c CatRepository) Search(text string) ([]model.Cat, error) {
 	}
 	defer session.Close()
 	//SELECT * FROM catalog.cats WHERE name LIKE 'sint%'
-	query := session.Query(`SELECT name, date_of_birth, image_url FROM catalog.cats WHERE name LIKE ?`, text+"%")
+	query := session.Query(`SELECT id, name, date_of_birth, image_url FROM catalog.cats WHERE name LIKE ?`, text+"%")
 	iter := query.Iter()
 	for {
 		var cat model.Cat

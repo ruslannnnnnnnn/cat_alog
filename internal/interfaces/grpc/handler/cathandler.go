@@ -63,6 +63,9 @@ func (g *GrpcCatHandler) SearchCat(ctx context.Context, search *pb.SearchCatByTe
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
+	if len(searchResult) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "not found")
+	}
 	cats := make([]*pb.Cat, len(searchResult))
 	for i, item := range searchResult {
 		cats[i] = &pb.Cat{
